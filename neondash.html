@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NeonDash Pro · Cyber Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', monospace;
+        }
+
+        body {
+            background: #000;
+            color: #0ff;
+            overflow-x: hidden;
+        }
+
+        #grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 20, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid #0ff;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 0 0 15px #0ff;
+        }
+
+        .back-link a {
+            color: #0ff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #0ff;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        .back-link a:hover {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 30px #0ff;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff3366;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background: #ff3366;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 30, 60, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid #0ff;
+            border-radius: 25px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            color: #aaddff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 20px #0ff;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #0ff; }
+            50% { text-shadow: 0 0 40px #f0f; }
+        }
+
+        .stat-unit {
+            font-size: 1rem;
+            color: #a855f7;
+        }
+
+        /* Charts */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(0, 20, 40, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid #0ff;
+            border-radius: 25px;
+            padding: 25px;
+        }
+
+        .chart-title {
+            color: #0ff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 200px;
+            margin: 30px 0;
+        }
+
+        .bar {
+            width: 40px;
+            background: linear-gradient(to top, #0ff, #a855f7);
+            border-radius: 10px 10px 0 0;
+            animation: barGlow 2s infinite;
+            position: relative;
+        }
+
+        .bar:nth-child(1) { height: 180px; animation-delay: 0s; }
+        .bar:nth-child(2) { height: 120px; animation-delay: 0.2s; }
+        .bar:nth-child(3) { height: 200px; animation-delay: 0.4s; }
+        .bar:nth-child(4) { height: 90px; animation-delay: 0.6s; }
+        .bar:nth-child(5) { height: 150px; animation-delay: 0.8s; }
+        .bar:nth-child(6) { height: 110px; animation-delay: 1s; }
+        .bar:nth-child(7) { height: 170px; animation-delay: 1.2s; }
+
+        @keyframes barGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); box-shadow: 0 0 20px #0ff; }
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #aaddff;
+            font-size: 0.8rem;
+        }
+
+        /* Line Chart */
+        .line-chart {
+            height: 200px;
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #0ff, #a855f7, #0ff);
+            animation: moveLine 3s linear infinite;
+        }
+
+        @keyframes moveLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .data-points {
+            display: flex;
+            justify-content: space-around;
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .point {
+            width: 10px;
+            height: 10px;
+            background: #0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #0ff;
+            animation: pointPulse 2s infinite;
+        }
+
+        .point:nth-child(1) { animation-delay: 0s; }
+        .point:nth-child(2) { animation-delay: 0.3s; }
+        .point:nth-child(3) { animation-delay: 0.6s; }
+        .point:nth-child(4) { animation-delay: 0.9s; }
+        .point:nth-child(5) { animation-delay: 1.2s; }
+        .point:nth-child(6) { animation-delay: 1.5s; }
+        .point:nth-child(7) { animation-delay: 1.8s; }
+
+        @keyframes pointPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.7; }
+        }
+
+        /* Activity Log */
+        .activity-log {
+            background: rgba(0, 20, 40, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid #0ff;
+            border-radius: 25px;
+            padding: 25px;
+        }
+
+        .log-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #0ff20;
+            font-family: monospace;
+        }
+
+        .log-time {
+            color: #a855f7;
+        }
+
+        .log-event {
+            color: #0ff;
+        }
+
+        .log-value {
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="grid-bg"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-microchip"></i> NEONDASH PRO
+            </div>
+            <div class="live-badge">
+                <span class="dot"></span>
+                <span>LIVE SIMULATION</span>
+            </div>
+            <div class="back-link">
+                <a href="web.html"><i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">CPU Usage</div>
+                <div class="stat-value" id="cpuValue">47<span class="stat-unit">%</span></div>
+                <div style="color: #aaddff;">8-core processor</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">Memory</div>
+                <div class="stat-value" id="ramValue">2.4<span class="stat-unit">GB</span></div>
+                <div style="color: #aaddff;">of 16GB</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">Network</div>
+                <div class="stat-value" id="networkValue">1.2<span class="stat-unit">Gbps</span></div>
+                <div style="color: #aaddff;">real-time throughput</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">Active Users</div>
+                <div class="stat-value" id="usersValue">1.5k<span class="stat-unit"></span></div>
+                <div style="color: #aaddff;">connected now</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-chart-bar"></i> SYSTEM METRICS - LAST 24 HOURS
+                </div>
+                <div class="bar-chart">
+                    <div class="bar"><span class="bar-label">00</span></div>
+                    <div class="bar"><span class="bar-label">04</span></div>
+                    <div class="bar"><span class="bar-label">08</span></div>
+                    <div class="bar"><span class="bar-label">12</span></div>
+                    <div class="bar"><span class="bar-label">16</span></div>
+                    <div class="bar"><span class="bar-label">20</span></div>
+                    <div class="bar"><span class="bar-label">24</span></div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-chart-line"></i> NETWORK TRAFFIC
+                </div>
+                <div class="line-chart">
+                    <div class="line"></div>
+                    <div class="data-points">
+                        <div class="point"></div>
+                        <div class="point"></div>
+                        <div class="point"></div>
+                        <div class="point"></div>
+                        <div class="point"></div>
+                        <div class="point"></div>
+                        <div class="point"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="activity-log">
+            <div class="chart-title">
+                <i class="fas fa-terminal"></i> LIVE ACTIVITY LOG
+            </div>
+            <div class="log-entry" id="log1">
+                <span class="log-time">[15:32:47]</span>
+                <span class="log-event">API Request</span>
+                <span class="log-value">GET /api/metrics - 200</span>
+            </div>
+            <div class="log-entry" id="log2">
+                <span class="log-time">[15:32:45]</span>
+                <span class="log-event">Database Query</span>
+                <span class="log-value">12ms response time</span>
+            </div>
+            <div class="log-entry" id="log3">
+                <span class="log-time">[15:32:42]</span>
+                <span class="log-event">WebSocket</span>
+                <span class="log-value">142 clients connected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Fake data simulation -->
+    <script>
+        function updateFakeData() {
+            // Random CPU between 20-85%
+            document.getElementById('cpuValue').innerHTML = Math.floor(Math.random() * 65 + 20) + '<span class="stat-unit">%</span>';
+            
+            // Random RAM between 1.2-7.8GB
+            const ram = (Math.random() * 6.6 + 1.2).toFixed(1);
+            document.getElementById('ramValue').innerHTML = ram + '<span class="stat-unit">GB</span>';
+            
+            // Random Network between 0.3-2.5Gbps
+            const network = (Math.random() * 2.2 + 0.3).toFixed(1);
+            document.getElementById('networkValue').innerHTML = network + '<span class="stat-unit">Gbps</span>';
+            
+            // Random Users between 1.2k-2.8k
+            const users = (Math.random() * 1.6 + 1.2).toFixed(1);
+            document.getElementById('usersValue').innerHTML = users + 'k<span class="stat-unit"></span>';
+
+            // Update timestamps in activity log
+            const now = new Date();
+            const timeStr = `[${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}]`;
+            
+            document.querySelector('#log1 .log-time').textContent = timeStr;
+            document.querySelector('#log2 .log-time').textContent = timeStr;
+            document.querySelector('#log3 .log-time').textContent = timeStr;
+        }
+
+        // Update every 2 seconds
+        updateFakeData();
+        setInterval(updateFakeData, 2000);
+    </script>
+</body>
+</html>
